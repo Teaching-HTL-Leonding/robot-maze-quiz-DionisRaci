@@ -29,17 +29,67 @@ namespace Maze.Solver
         /// the exit is not reachable, it has to call <see cref="IRobot.HaltAndCatchFire"/>
         /// and exit.
         /// </remarks>
+        bool reachedEnd = false;
         public void MoveRobotToExit()
         {
             // Here you have to add your code
 
             // Trivial sample algorithm that can just move right
-            var reachedEnd = false;
+            
             robot.ReachedExit += (_, __) => reachedEnd = true;
-
-            while (!reachedEnd)
-            {
+            Direction d = new Direction();
+            if(robot.CanIMove(Direction.Right)) {
+                d = Direction.Right;
+            }
+            else if (robot.CanIMove(Direction.Left)) {
+                d = Direction.Left;
+            }
+            else if (robot.CanIMove(Direction.Up)) {
+                d = Direction.Up;
+            }
+            else if (robot.CanIMove(Direction.Down)) {
+                d = Direction.Down;
+            }
+            else {
+                robot.HaltAndCatchFire();
+                return;
+            }
+            ThisIsRecursive(d);
+            //while (!reachedEnd)
+            //{
+            //    robot.Move(Direction.Right);
+            //}
+        }
+        public void ThisIsRecursive(Direction d) {
+            robot.Move(d);
+            if (reachedEnd) {
+                return;
+            }
+            
+            if (robot.CanIMove(Direction.Right) && d != Direction.Left) {
+                ThisIsRecursive(Direction.Right);
+                if (reachedEnd) {
+                    return;
+                }
+                robot.Move(Direction.Left);
+            } if (robot.CanIMove(Direction.Left) && d != Direction.Right) {
+                ThisIsRecursive(Direction.Left);
+                if (reachedEnd) {
+                    return;
+                }
                 robot.Move(Direction.Right);
+            } if (robot.CanIMove(Direction.Down) && d != Direction.Up) {
+                ThisIsRecursive(Direction.Down);
+                if (reachedEnd) {
+                    return;
+                }
+                robot.Move(Direction.Up);
+            }  if (robot.CanIMove(Direction.Up) && d != Direction.Down) {
+                ThisIsRecursive(Direction.Up);
+                if (reachedEnd) {
+                    return;
+                }
+                robot.Move(Direction.Down);
             }
         }
     }
